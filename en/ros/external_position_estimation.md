@@ -231,14 +231,15 @@ You are now set to proceed to the first flight.
 After setting up one of the (specific) systems described above you should now be ready to test.
 The instructions below show how to do so for MoCap and VIO systems 
 
-### MoCap First Flight
+### Check external estimate
 
-Be sure to perform the following checks:
+Be sure to perform the following checks before your first flight:
 
-* **Before** creating the rigid body, align the robot with world x axis.
-* Stream over MAVLink and check the MAVLink inspector with *QGroundControl*, the local pose topic should be in NED.
-* Move the robot around by hand and see if the estimated local position is consistent (always in NED).
-* Rotate the robot on the vertical axis and check the yaw with the MAVLink inspector.
+* Set the PX4 parameter `MAV_ODOM_LP` to 1. PX4 will therefore publish the received external pose on the MAVLink [ODOMETRY](https://mavlink.io/en/messages/common.html#ODOMETRY); 
+* Check this MAVLink message with e.g. the Analyze Widget of *QGroundControl*. For this, yaw the vehicle until the quaternion of the ODOMETRY message is very close to a unit quaterion. (w=1, x=y=z=0)
+* At this point the body frame is aligned with the reference frame of the external pose system. If you do not manage to get a quaternion close to the unit quaternion, your frame probably still have a pitch or roll offset.
+* Once aligned you can pick the vehicle up from the ground and you should see the position's z coordinate to decrease. Moveing the vehilce in forward direction, should increase the position's x coordinate. while moving the vehicle to the right should increase the y coordinate. In the case you send also linear velocities from the external pose system you should also check the linear velocities. Check that the linear velocities are in expressed in the FRD body frame.
+* Set the PX4 parameter `MAV_ODOM_LP` back to 0. In this case the ODOMETRY message will contain the estimate coming from the estimator.
 
 If those steps are consistent, you can try your first flight.
 
@@ -258,7 +259,3 @@ Increase the value of the left stick and the robot will take off,
 put it back to the middle right after. Check if it is able to keep its position.
 
 If it works, you may want to set up an [offboard](offboard_control.md) experiment by sending position-setpoint from a remote ground station.
-
-### VIO First Flight
-
-TBD.
